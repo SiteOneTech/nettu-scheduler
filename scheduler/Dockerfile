@@ -14,7 +14,8 @@ WORKDIR /home/rust/
 
 COPY . .
 
-ENV DATABASE_URL "postgresql://postgres:postgres@172.17.0.1:5432/nettuscheduler"
+ARG DATABASE_URL="postgresql://nettu:nettu_dev_password@127.0.0.1:55432/nettuscheduler"
+ENV DATABASE_URL=${DATABASE_URL}
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && cargo build --release \
@@ -23,4 +24,4 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && rm -rf /home/rust/target \
     && rustup self uninstall -y
 
-ENTRYPOINT ["/bin/sh", "-c" , "./migrate && ./nettu_scheduler"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ \"${MIGRATE_ON_START:-true}\" = \"true\" ]; then ./migrate; fi; ./nettu_scheduler"]
