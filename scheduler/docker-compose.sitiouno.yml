@@ -10,8 +10,8 @@ services:
         DATABASE_URL: postgresql://${AGENT_DB_ADMIN_USER}:${AGENT_DB_ADMIN_PASSWORD}@127.0.0.1:${AGENT_DB_HOST_PORT:-55430}/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
     restart: unless-stopped
     environment:
-      # Runtime uses the least-privilege calendar role on the shared Agent Core DB.
-      DATABASE_URL: postgresql://${CALENDAR_DB_RUNTIME_USER:-calendar_runtime}:${CALENDAR_DB_RUNTIME_PASSWORD:?CALENDAR_DB_RUNTIME_PASSWORD is required}@agent-postgres:5432/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
+      # Runtime uses the least-privilege calendar role from Infisical.
+      DATABASE_URL: ${CALENDAR_DATABASE_URL_DOCKER:?CALENDAR_DATABASE_URL_DOCKER is required}
       ACCOUNT_API_KEY: ${ACCOUNT_API_KEY:?ACCOUNT_API_KEY is required}
       ACCOUNT_ID: ${ACCOUNT_ID:-zeus-calendar}
       PORT: ${PORT:-5000}
