@@ -6,12 +6,12 @@ services:
       network: host
       args:
         # SQLx validates queries at compile time. During local builds, connect
-        # through the host-bound Agent Core Postgres port.
-        DATABASE_URL: postgresql://${AGENT_DB_ADMIN_USER:-agent_admin}:${AGENT_DB_ADMIN_PASSWORD:?AGENT_DB_ADMIN_PASSWORD is required}@127.0.0.1:${AGENT_DB_HOST_PORT:-55430}/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
+        # through the host-bound Agent Core Postgres port with the migration role.
+        DATABASE_URL: postgresql://${AGENT_DB_ADMIN_USER}:${AGENT_DB_ADMIN_PASSWORD}@127.0.0.1:${AGENT_DB_HOST_PORT:-55430}/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
     restart: unless-stopped
     environment:
-      # Runtime uses the shared Docker network and the Agent Core DB server.
-      DATABASE_URL: postgresql://${AGENT_DB_ADMIN_USER:-agent_admin}:${AGENT_DB_ADMIN_PASSWORD:?AGENT_DB_ADMIN_PASSWORD is required}@agent-postgres:5432/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
+      # Runtime uses the least-privilege calendar role on the shared Agent Core DB.
+      DATABASE_URL: postgresql://${CALENDAR_DB_RUNTIME_USER:-calendar_runtime}:${CALENDAR_DB_RUNTIME_PASSWORD:?CALENDAR_DB_RUNTIME_PASSWORD is required}@agent-postgres:5432/${AGENT_CALENDAR_DB_NAME:-nettu_calendar}
       ACCOUNT_API_KEY: ${ACCOUNT_API_KEY:?ACCOUNT_API_KEY is required}
       ACCOUNT_ID: ${ACCOUNT_ID:-zeus-calendar}
       PORT: ${PORT:-5000}
